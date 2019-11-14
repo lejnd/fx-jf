@@ -22,7 +22,12 @@ const obj2formdata = (obj) => {
     return formData;
 }
 
+const isIOS = () => {
+    var u = navigator.userAgent;
+    return !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+}
+
 export default {
-    isVerificationNumber, obj2formdata, 
+    isVerificationNumber, obj2formdata, isIOS,
 }
 </script>
