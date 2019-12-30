@@ -17,8 +17,8 @@
                     >{{codeTimerBool ? `${codeTimer}s` : '获取验证码'}}</van-button>
                 </van-field>
             </van-cell-group>
-            <van-button class="jf-btn" size="large" type="warning" :disabled="isDisabled" @click="query">积分查询</van-button>
-            <van-button v-if="showBtn" class="jf-btn gray" size="large" :disabled="isDisabled" @click="jumpTo">跳过积分查询</van-button>
+            <van-button class="jf-btn" size="large" type="warning" :disabled="isDisabled" @click="queryJF">积分查询</van-button>
+            <!-- <van-button v-if="showBtn" class="jf-btn gray" size="large" :disabled="isDisabled" @click="jumpTo">跳过积分查询</van-button> -->
             <div class="qr-wp">
                 <div ref="qrcode"></div>
                 <!-- <p class="deco">{{openid}}</p> -->
@@ -50,6 +50,7 @@ export default {
             merchid: '',
             showBtn: false,
             isDisabled: true,
+            // isDisabled: false,
             openid: '',
         };
     },
@@ -65,7 +66,7 @@ export default {
                 return false;
             } else {
                 this.codeBtnLoading = true;
-                this.$fly.post('/app/index.php?i=3&c=entry&m=ewei_shopv2&do=mobile&r=goods.send_mobile_code', common.obj2formdata({ mobile: this.phone }))
+                this.$fly.post('/test_kmfx1_api/ydjf/sendydcode', common.obj2formdata({ mobile: this.phone }))
                 .then((res) => {
                     if (typeof res === 'string') res = JSON.parse(res);
                     let { m, s, d } = res;
@@ -89,7 +90,7 @@ export default {
                 }
             }, 1000);
         },
-        query() {
+        queryJF() {
             if (!this.phone) {
                 this.$notify(tip[0]);
                 return false;
@@ -110,13 +111,13 @@ export default {
                 message: '查询中...'
             });
             let req = { mobile: this.phone, code: this.code }
-            this.$fly.post('/app/index.php?i=3&c=entry&m=ewei_shopv2&do=mobile&r=goods.getScore', common.obj2formdata(req))
+            this.$fly.post('/test_kmfx1_api/ydjf/logintoyd', common.obj2formdata(req))
             .then((res) => {
                 if (typeof res === 'string') res = JSON.parse(res);
                 let { m, s, d } = res;
                 if (s == 1) {
-                    this.$router.push(`/info?integral=${d}&mobile=${this.phone}&merchid=${this.merchid}&openid=${this.openid}`)
                     loading.clear();
+                    this.$router.push(`/info?kyjf=${d.kyjf}&mobile=${this.phone}&merchid=${this.merchid}&openid=${this.openid}`)
                 } else {
                     loading.message = m;
                     setTimeout(() => {
@@ -130,9 +131,9 @@ export default {
                 }, 2000)
             })
         },
-        jumpTo() {
-            this.$router.push(`/info?mobile=${this.phone}&merchid=${this.merchid}&openid=${this.openid}`)
-        },
+        // jumpTo() {
+        //     this.$router.push(`/info?mobile=${this.phone}&merchid=${this.merchid}&openid=${this.openid}`)
+        // },
         // save_jfuser() {
         //     let req = {
         //         openid: window.$openid, 
@@ -188,11 +189,25 @@ export default {
             var r = window.location.search.substr(1).match(reg); 
             if (r != null) return unescape(r[2]); 
             return null; 
-        }
+        },
+        // 清除移动登录cookie
+        clearCookies() {
+            return this.$fly.post('/test_kmfx1_api/ydjf/clearcookies')
+            .then((res) => {
+                if (typeof res === 'string') res = JSON.parse(res);
+                console.log(res);
+            })
+        },
     },
     mounted() {
         // this.save_jfuser()
+        this.clearCookies();
         this.createQrcode();
+        // this.$dialog.alert({
+        //     title: '提示',
+        //     message: '积分暂停兑换，开放等通知',
+        //     showConfirmButton: false,
+        // })
     }
 };
 </script>

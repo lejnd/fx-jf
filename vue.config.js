@@ -16,15 +16,15 @@ module.exports = {
                 //     '^/api': ''
                 // }
             },
-            '/apii': {
+            '/test_kmfx1_api': {
                 target: 'http://test.kmfx1.com', // 测试环境
                 changOrigin: true,
-                // pathRewrite: {
-                //     '^/api': ''
-                // }
+                pathRewrite: {
+                    '^/test_kmfx1_api': ''
+                }
             },
             '/app': {
-                target: 'http://rrcloud.kmfx1.com',
+                target: 'http://mallcs.kmfx1.com',
                 changOrigin: true,
             }
         }

@@ -18,7 +18,7 @@ fly.interceptors.request.use((request)=>{
     //给所有请求添加自定义header
     request.headers['X-Tag']="flyio";
     request.headers['Content-Type'] = 'application/json';
-    request.timeout = 10000;
+    request.timeout = 20000;
     request.withCredentials = true;
     // return request;
 })
